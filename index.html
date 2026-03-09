@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>النموذج 2 الشامل - أ/ عبدالعزيز الفيفي</title>
+    <title>تحدي اليوم - أ/ عبدالعزيز الفيفي</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
         :root { --primary: #4a148c; --secondary: #7b1fa2; --bg: #f5f5f5; --accent: #ff9800; --correct: #2e7d32; --wrong: #c62828; }
@@ -14,14 +14,13 @@
         .correct-flash { background-color: #e8f5e9 !important; border-color: var(--correct) !important; color: var(--correct); border-width: 3px !important; }
         .wrong-flash { background-color: #ffeeb2 !important; border-color: var(--wrong) !important; color: var(--wrong); }
         .hidden { display: none; }
-        .reading-text { background: #fff9c4; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: right; font-size: 1rem; border-right: 5px solid var(--accent); }
+        .reading-text { background: #fff9c4; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: right; font-size: 1rem; border-right: 5px solid var(--accent); line-height: 1.6; }
         input[type="text"] { width: 85%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 2px solid #ddd; font-size: 1rem; text-align: center; }
         .btn-start { background: var(--primary); color: white; padding: 12px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
         #feedback { margin-top: 15px; font-weight: bold; font-size: 1.1rem; min-height: 1.5em; }
         #timer-text { font-weight: bold; color: var(--accent); margin-bottom: 10px; }
         .copyright { font-size: 0.85rem; color: #666; margin-top: 25px; border-top: 1px solid #eee; padding-top: 10px; }
 
-        /* التنسيقات المطلوبة لاسمك والمدرسة والتاريخ */
         .normal-text { color: #000; font-weight: normal; font-size: 0.85rem; }
         .date-red-small { color: #e53e3e; font-size: 0.85rem; font-weight: bold; margin: 10px 0; display: inline-block; }
     </style>
@@ -56,32 +55,31 @@
     <div id="result-section" class="hidden">
         <h2>تم اكتمال الاختبار بنجاح</h2>
         <h1 id="final-score" style="color: var(--primary);"></h1>
-      <!-- إضافة خط Tajawal من Google Fonts لضمان جمال النص -->
-<link href="https://fonts.googleapis.com" rel="stylesheet">
+        <link href="https://fonts.googleapis.com" rel="stylesheet">
 
-<button class="btn-start" onclick="location.reload()" style="
-    background: linear-gradient(45deg, #ff512f, #dd2476);
-    color: white;
-    padding: 15px 30px;
-    border: none;
-    border-radius: 50px;
-    font-family: 'Tajawal', sans-serif;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(221, 36, 118, 0.4);
-    transition: transform 0.3s ease;
-    direction: rtl;
-">
-    ليس هناك تحدٍ أكبر من تطوير ذاتك؛ أعد الكرة الآن 🚀 أو كُن النسخة الأفضل غداً 🔥✨
-</button>
+        <button class="btn-start" onclick="location.reload()" style="
+            background: linear-gradient(45deg, #ff512f, #dd2476);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Tajawal', sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(221, 36, 118, 0.4);
+            transition: transform 0.3s ease;
+            direction: rtl;
+        ">
+            ليس هناك تحدٍ أكبر من تطوير ذاتك؛ أعد الكرة الآن 🚀 أو كُن النسخة الأفضل غداً 🔥✨
+        </button>
 
-<style>
-    .btn-start:hover {
-        transform: scale(1.05);
-        box-shadow: 0 6px 20px rgba(221, 36, 118, 0.6);
-    }
-</style>
+        <style>
+            .btn-start:hover {
+                transform: scale(1.05);
+                box-shadow: 0 6px 20px rgba(221, 36, 118, 0.6);
+            }
+        </style>
 
         <p style="margin-top: 20px;">✨ أ / <span class="normal-text">عبد العزيز الفيفي</span> - <span class="normal-text">ثانوية الأمير عبدالمجيد 🎓</span></p>
     </div>
@@ -106,38 +104,47 @@
     const TRANSITION_DELAY = 5500;
 
     const rawData = [
-        { type: "التناظر اللفظي", q: "رئة : تنفس", options: ["عين : رؤية", "قلب : دم", "معدة : هضم", "قدم : مشي"], correctText: "معدة : هضم" },
-        { type: "التناظر اللفظي", q: "سفينة : مرساة", options: ["سيارة : كوابح", "شجرة : جذور", "طائرة : مدرج", "منزل : جدران"], correctText: "شجرة : جذور" },
-        { type: "التناظر اللفظي", q: "نحل : عسل", options: ["نخل : تمر", "بقرة : حليب", "دجاج : بيض", "ورد : عطر"], correctText: "ورد : عطر" },
-        { type: "إكمال الجمل", q: "حسن ..... يستر سلبياً كثيراً، كما أن سوء ..... يغطي إيجابياً كثيراً", options: ["الخلق - الخلق", "العمل - العمل", "المظهر - المظهر", "القول - القول"], correctText: "الخلق - الخلق" },
-        { type: "إكمال الجمل", q: "العاقل هو من ..... بين الحق والباطل", options: ["يفرق", "يميز", "يفصل", "يختار"], correctText: "يميز" },
-        { type: "إكمال الجمل", q: "من زاد عقله قل .....", options: ["ماله", "كلامه", "صديقه", "خوفه"], correctText: "كلامه" },
-        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة بين الكلمات التالية؟", options: ["أسد", "نمر", "فهد", "غزال"], correctText: "غزال" },
-        { type: "الارتباط والاختلاف", q: "ما الكلمة التي ترتبط بـ (كتاب)؟", options: ["مؤلف", "مكتبة", "ورق", "مجلد"], correctText: "ورق" },
-        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة؟", options: ["القاهرة", "الرياض", "جدة", "الكويت"], correctText: "جدة" },
-        { type: "الخطأ في السياق", q: "صديقك من صدقك لا من صدقك في كل ما تقول", options: ["صديقك", "صدقك", "صدقك", "تقول"], correctText: "صدقك" },
-        { type: "الخطأ في السياق", q: "المناضل الحقيقي هو من يسعى من أجل الحرية للآخرين لا لنفسه فقط", options: ["المناضل", "الحرية", "للآخرين", "فقط"], correctText: "فقط" },
-        { type: "الخطأ في السياق", q: "لا تمازح اللئيم فيحنق عليك، ولا الكريم فيزدريك", options: ["تمازح", "فيحنق", "الكريم", "فيزدريك"], correctText: "فيزدريك" },
+        // 1. التناظر اللفظي (أسئلة جديدة)
+        { type: "التناظر اللفظي", q: "أذن : سمع", options: ["عين : نظارة", "لسان : تذوق", "أنف : هواء", "يد : لمس"], correctText: "لسان : تذوق" },
+        { type: "التناظر اللفظي", q: "منحل : نحل", options: ["إسطبل : خيول", "عرين : صيد", "مكتبة : قراءة", "ملعب : كره"], correctText: "إسطبل : خيول" },
+        { type: "التناظر اللفظي", q: "غمد : سيف", options: ["جراب : مسدس", "خاتم : إصبع", "قدم : حذاء", "نظارة : عين"], correctText: "جراب : مسدس" },
+        
+        // 2. إكمال الجمل
+        { type: "إكمال الجمل", q: "كن ..... ترى الوجود جميلاً", options: ["متفائلاً", "قانعاً", "جميلاً", "صابراً"], correctText: "جميلاً" },
+        { type: "إكمال الجمل", q: "العلم في الصغر كالنقش على .....", options: ["الرمل", "الماء", "الورق", "الحجر"], correctText: "الحجر" },
+        { type: "إكمال الجمل", q: "من سلك طريقاً يلتمس فيه علماً ..... الله له طريقاً إلى الجنة", options: ["سهّل", "فتح", "يسّر", "أنار"], correctText: "سهّل" },
+
+        // 3. المفردة الشاذة والارتباط والاختلاف
+        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة؟", options: ["الرياض", "القاهرة", "بغداد", "الشارقة"], correctText: "الشارقة" },
+        { type: "الارتباط والاختلاف", q: "ما الكلمة المختلفة؟", options: ["الشتاء", "الربيع", "الخريف", "المطر"], correctText: "المطر" },
+        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة؟", options: ["الفجر", "الضحى", "الظهر", "العصر"], correctText: "الضحى" },
+
+        // 4. الخطأ في السياق
+        { type: "الخطأ في السياق", q: "من عفا عن إساءة عدوه، زادت كراهيته له", options: ["عفا", "إساءة", "زادت", "كراهيته"], correctText: "كراهيته" },
+        { type: "الخطأ في السياق", q: "الابتسامة بوجه أخيك صدقة تعيد اليأس لقلبه الحزين", options: ["الابتسامة", "صدقة", "اليأس", "الحزين"], correctText: "اليأس" },
+        { type: "الخطأ في السياق", q: "من أراد علماً بلا عمل، كمن أراد سفينة بلا بحر", options: ["علماً", "عمل", "سفينة", "بحر"], correctText: "بحر" },
+
+        // 5. استيعاب المقروء
         { 
             type: "استيعاب المقروء", 
-            text: "تعد القراءة من أهم وسائل كسب المعرفة، فهي تفتح للعقل آفاقاً واسعة، وتساعد في بناء شخصية الفرد وتطوير فكره.",
-            q: "يستنتج من النص أن القراءة تساعد في:", 
-            options: ["زيادة الوزن", "تطوير الفكر", "تضييع الوقت", "السفر للخارج"], 
-            correctText: "تطوير الفكر" 
+            text: "تعتبر مدينة الرياض عاصمة المملكة العربية السعودية، وهي مركز سياسي واقتصادي هام، وتتميز بتطورها العمراني المتسارع.",
+            q: "تعتبر الرياض مركزاً هاماً من الناحية:", 
+            options: ["الزراعية", "السياسية والاقتصادية", "السياحية فقط", "التاريخية القديمة"], 
+            correctText: "السياسية والاقتصادية" 
         },
         { 
             type: "استيعاب المقروء", 
-            text: "تعتبر المياه الجوفية مصدراً أساسياً للحياة في المناطق الصحراوية، حيث تعتمد عليها الزراعة والشرب بشكل رئيسي.",
-            q: "أنسب عنوان لهذا النص هو:", 
-            options: ["الزراعة الحديثة", "المياه الجوفية", "الحياة في المدن", "تلوث البيئة"], 
-            correctText: "المياه الجوفية" 
+            text: "تعتمد الرؤية الوطنية 2030 على تنويع مصادر الدخل وتقليل الاعتماد على النفط، لضمان مستقبل مستدام للأجيال القادمة.",
+            q: "الهدف من تقليل الاعتماد على النفط هو:", 
+            options: ["زيادة الاستهلاك", "ضمان مستقبل مستدام", "توفير فرص عمل", "تطوير التعليم"], 
+            correctText: "ضمان مستقبل مستدام" 
         },
         { 
             type: "استيعاب المقروء", 
-            text: "اللغة العربية لغة غنية بمفرداتها، وهي لغة القرآن الكريم، وتتميز بجمال خطوطها وبلاغتها.",
-            q: "تتميز اللغة العربية كما ورد في النص بـ:", 
-            options: ["صعوبة تعلمها", "جمال خطوطها", "قلة مفرداتها", "حداثة نشأتها"], 
-            correctText: "جمال خطوطها" 
+            text: "تعتبر زراعة النخيل في المملكة من أهم المحاصيل الزراعية، حيث تحتل المملكة مراكز متقدمة عالمياً في إنتاج التمور.",
+            q: "تحتل المملكة مراكز متقدمة في إنتاج:", 
+            options: ["القمح", "التمور", "الزيتون", "العنب"], 
+            correctText: "التمور" 
         }
     ];
 
@@ -162,22 +169,14 @@
     function showQuestion() {
         const q = quizData[currentQ];
         const shuffledOptions = shuffle([...q.options]);
-        
         document.getElementById('question-title').innerText = `س ${currentQ + 1} في ( ${q.type} )`;
-        
         const readingBox = document.getElementById('reading-container');
-        if (q.text) {
-            readingBox.innerText = q.text;
-            readingBox.classList.remove('hidden');
-        } else {
-            readingBox.classList.add('hidden');
-        }
-
+        if (q.text) { readingBox.innerText = q.text; readingBox.classList.remove('hidden'); } 
+        else { readingBox.classList.add('hidden'); }
         document.getElementById('question-text').innerText = q.q;
         const container = document.getElementById('options-container');
         container.innerHTML = '';
         document.getElementById('feedback').innerText = '';
-        
         shuffledOptions.forEach((opt, index) => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
@@ -196,10 +195,7 @@
         timerInterval = setInterval(() => {
             timeLeft--;
             updateTimerUI();
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                showCorrectAndNext();
-            }
+            if (timeLeft <= 0) { clearInterval(timerInterval); showCorrectAndNext(); }
         }, 1000);
     }
 
@@ -226,9 +222,7 @@
 
     function highlightCorrect(correctText) {
         const btns = document.querySelectorAll('.option-btn');
-        btns.forEach(btn => {
-            if (btn.innerText === correctText) btn.classList.add('correct-flash');
-        });
+        btns.forEach(btn => { if (btn.innerText === correctText) btn.classList.add('correct-flash'); });
     }
 
     function showCorrectAndNext() {
@@ -246,11 +240,8 @@
 
     function nextQuestion() {
         currentQ++;
-        if (currentQ < quizData.length) {
-            showQuestion();
-        } else {
-            finishQuiz();
-        }
+        if (currentQ < quizData.length) { showQuestion(); } 
+        else { finishQuiz(); }
     }
 
     function finishQuiz() {
@@ -260,6 +251,4 @@
     }
 </script>
 </body>
-
 </html>
-
