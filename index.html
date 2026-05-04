@@ -6,23 +6,24 @@
     <title>تحدي اليوم - أ/ عبدالعزيز الفيفي</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --primary: #4a148c; --secondary: #7b1fa2; --bg: #f5f5f5; --accent: #ff9800; --correct: #2e7d32; --wrong: #c62828; }
+        :root { --primary: #1a237e; --secondary: #311b92; --bg: #f8f9fa; --accent: #f57c00; --correct: #1b5e20; --wrong: #b71c1c; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .quiz-container { background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 90%; max-width: 650px; text-align: center; position: relative; }
-        #timer-bar { position: absolute; top: 0; right: 0; height: 6px; background: var(--accent); width: 100%; transition: width 1s linear; border-radius: 15px 15px 0 0; }
-        .option-btn { display: block; width: 100%; padding: 12px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; background: none; cursor: pointer; transition: 0.3s; font-size: 1.1rem; font-weight: 500; }
-        .correct-flash { background-color: #e8f5e9 !important; border-color: var(--correct) !important; color: var(--correct); border-width: 3px !important; }
-        .wrong-flash { background-color: #ffeeb2 !important; border-color: var(--wrong) !important; color: var(--wrong); }
+        .quiz-container { background: white; padding: 2.5rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.15); width: 95%; max-width: 700px; text-align: center; position: relative; border-top: 8px solid var(--primary); }
+        #timer-bar { position: absolute; top: 0; right: 0; height: 8px; background: var(--accent); width: 100%; transition: width 1s linear; border-radius: 20px 20px 0 0; }
+        .option-btn { display: block; width: 100%; padding: 14px; margin: 12px 0; border: 2px solid #e0e0e0; border-radius: 10px; background: #fff; cursor: pointer; transition: all 0.3s ease; font-size: 1.15rem; font-weight: 500; color: #333; }
+        .option-btn:hover { border-color: var(--secondary); background-color: #f3e5f5; }
+        .correct-flash { background-color: #e8f5e9 !important; border-color: var(--correct) !important; color: var(--correct); border-width: 3px !important; box-shadow: 0 0 10px rgba(27,94,32,0.2); }
+        .wrong-flash { background-color: #ffebee !important; border-color: var(--wrong) !important; color: var(--wrong); }
         .hidden { display: none; }
-        .reading-text { background: #fff9c4; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-align: right; font-size: 1rem; border-right: 5px solid var(--accent); line-height: 1.6; }
-        input[type="text"] { width: 85%; padding: 12px; margin-bottom: 20px; border-radius: 8px; border: 2px solid #ddd; font-size: 1rem; text-align: center; }
-        .btn-start { background: var(--primary); color: white; padding: 12px 30px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
-        #feedback { margin-top: 15px; font-weight: bold; font-size: 1.1rem; min-height: 1.5em; }
-        #timer-text { font-weight: bold; color: var(--accent); margin-bottom: 10px; }
-        .copyright { font-size: 0.85rem; color: #666; margin-top: 25px; border-top: 1px solid #eee; padding-top: 10px; }
-
-        .normal-text { color: #000; font-weight: normal; font-size: 0.85rem; }
-        .date-red-small { color: #e53e3e; font-size: 0.85rem; font-weight: bold; margin: 10px 0; display: inline-block; }
+        .reading-text { background: #fffde7; padding: 20px; border-radius: 10px; margin-bottom: 20px; text-align: right; font-size: 1.05rem; border-right: 6px solid var(--accent); line-height: 1.8; color: #444; }
+        input[type="text"] { width: 85%; padding: 15px; margin-bottom: 25px; border-radius: 10px; border: 2px solid #ddd; font-size: 1.1rem; text-align: center; outline: none; }
+        .btn-start { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px 40px; border: none; border-radius: 12px; cursor: pointer; font-size: 1.2rem; font-weight: bold; transition: transform 0.2s; }
+        .btn-start:hover { transform: scale(1.05); }
+        #feedback { margin-top: 20px; font-weight: bold; font-size: 1.2rem; min-height: 1.6em; }
+        #timer-text { font-weight: bold; color: var(--wrong); margin-bottom: 15px; font-size: 1.1rem; }
+        .copyright { font-size: 0.9rem; color: #777; margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; }
+        .normal-text { color: #555; font-weight: normal; }
+        .date-badge { background: #eee; color: var(--wrong); padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; margin-bottom: 15px; display: inline-block; }
     </style>
 </head>
 <body onload="updateDateTime()">
@@ -31,57 +32,32 @@
     <div id="timer-bar"></div>
     
     <div id="login-section">
-        <h2 style="color: var(--primary);">( تحدي اليوم )</h2>
-        
-        <div id="date-display" class="date-red-small">جاري تحميل التاريخ...</div>
-        
-        <div class="copyright">أ/ <span class="normal-text">عبدالعزيز الفيفي</span> - <span class="normal-text">ثانوية الأمير عبدالمجيد 🎓</span></div>
-        <p></p>
-        <input type="text" id="student-name" placeholder="أدخل اسمك الثلاثي لتبدأ...">
+        <h1 style="color: var(--primary); margin-bottom: 10px;">التحدي رقم ( 38 )</h1>
+        <div id="date-display" class="date-badge">جاري التحميل...</div>
+        <div class="reading-text" style="text-align: center; border: none; background: #e8eaf6;">
+            "ليس هناك تحدٍ أكبر من تطوير ذاتك"
+        </div>
+        <input type="text" id="student-name" placeholder="أدخل اسمك الثلاثي للمنافسة...">
         <br>
-        <button class="btn-start" onclick="startQuiz()">بدأ الاختبار</button>
+        <button class="btn-start" onclick="startQuiz()">ابدأ تحدي النخبة 🚀</button>
+        <div class="copyright">أ/ <span class="normal-text">عبدالعزيز الفيفي</span> - <span class="normal-text">ثانوية الأمير عبدالمجيد 🎓</span></div>
     </div>
 
     <div id="quiz-section" class="hidden">
-        <div id="timer-text">الوقت المتبقي: 40</div>
-        <h3 id="question-title" style="color: var(--secondary); margin-bottom: 5px;"></h3>
+        <div id="timer-text">⏳ المتبقي: 40 ثانية</div>
+        <h3 id="question-title" style="color: var(--secondary); margin-bottom: 10px; font-size: 1.3rem;"></h3>
         <div id="reading-container" class="reading-text hidden"></div>
-        <h2 id="question-text" style="margin-top: 5px;"></h2>
+        <h2 id="question-text" style="margin: 15px 0; color: #222;"></h2>
         <div id="options-container"></div>
         <div id="feedback"></div>
-        <div class="copyright"> أ/ <span class="normal-text">عبدالعزيز الفيفي</span> - <span class="normal-text">ثانوية الأمير عبدالمجيد 🎓</span></div>
+        <div class="copyright">أ/ <span class="normal-text">عبدالعزيز الفيفي</span> - <span class="normal-text">ثانوية الأمير عبدالمجيد 🎓</span></div>
     </div>
 
     <div id="result-section" class="hidden">
-        <h2>تم اكتمال الاختبار بنجاح</h2>
-        <h1 id="final-score" style="color: var(--primary);"></h1>
-        <link href="https://fonts.googleapis.com" rel="stylesheet">
-
-        <button class="btn-start" onclick="location.reload()" style="
-            background: linear-gradient(45deg, #ff512f, #dd2476);
-            color: white;
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50px;
-            font-family: 'Tajawal', sans-serif;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(221, 36, 118, 0.4);
-            transition: transform 0.3s ease;
-            direction: rtl;
-        ">
-            ليس هناك تحدٍ أكبر من تطوير ذاتك؛ أعد الكرة الآن 🚀 أو كُن النسخة الأفضل غداً 🔥✨
-        </button>
-
-        <style>
-            .btn-start:hover {
-                transform: scale(1.05);
-                box-shadow: 0 6px 20px rgba(221, 36, 118, 0.6);
-            }
-        </style>
-
-        <p style="margin-top: 20px;">✨ أ / <span class="normal-text">عبد العزيز الفيفي</span> - <span class="normal-text">ثانوية الأمير عبدالمجيد 🎓</span></p>
+        <h2 style="color: var(--primary);">انتهى سباق التميز!</h2>
+        <h1 id="final-score" style="font-size: 3rem; color: var(--accent); margin: 20px 0;"></h1>
+        <button class="btn-start" onclick="location.reload()">أعد الكرة.. كُن النسخة الأفضل 🔄</button>
+        <p class="copyright">بإشراف أ/ <span class="normal-text">عبدالعزيز الفيفي</span> - <span class="normal-text">ثانوية الأمير عبدالمجيد 🎓</span></p>
     </div>
 </div>
 
@@ -90,87 +66,46 @@
         const today = new Date();
         const hijriOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', calendar: 'islamic-umalqura', numberingSystem: 'arabic' };
         const gregOptions = { day: 'numeric', month: 'long', year: 'numeric', numberingSystem: 'arabic' };
-        
-        const hijriDate = new Intl.DateTimeFormat('ar-SA', hijriOptions).format(today);
-        const gregDate = new Intl.DateTimeFormat('ar-SA', gregOptions).format(today);
-        
-        document.getElementById('date-display').innerText = `${hijriDate} | ${gregDate} م`;
+        document.getElementById('date-display').innerText = `${new Intl.DateTimeFormat('ar-SA', hijriOptions).format(today)} | ${new Intl.DateTimeFormat('ar-SA', gregOptions).format(today)} م`;
     }
 
-    let timeLeft = 40;
-    let timerInterval;
-    let currentQ = 0;
-    let score = 0;
-    const TRANSITION_DELAY = 5500;
-
+    let timeLeft = 40, timerInterval, currentQ = 0, score = 0;
     const rawData = [
-        // --- 1. التناظر اللفظي ---
-        { type: "التناظر اللفظي", q: "سفينة : قبطان", options: ["مؤسسة : مدير", "قلم : كاتب", "سيارة : ركاب", "بيت : ساكن"], correctText: "مؤسسة : مدير" },
-        { type: "التناظر اللفظي", q: "قمح : سنابل", options: ["فضي : عملة", "نخلة : تمر", "ماء : نهر", "ورد : باقة"], correctText: "فضي : عملة" },
-        { type: "التناظر اللفظي", q: "ليل : قمر", options: ["نهار : شمس", "صيف : حرارة", "شتاء : برد", "نوم : حلم"], correctText: "نهار : شمس" },
-        { type: "التناظر اللفظي", q: "متحف : تحفة", options: ["مكتبة : كتاب", "مدرسة : طلاب", "خزانة : ملابس", "مستشفى : أطباء"], correctText: "مكتبة : كتاب" },
+        // --- التناظر اللفظي (فائق الصعوبة) ---
+        { type: "التناظر اللفظي", q: "فيافي : قفر", options: ["بيداء : فلات", "مدن : عمران", "بحار : عمق", "نجوم : ضياء"], correctText: "بيداء : فلات" },
+        { type: "التناظر اللفظي", q: "أتون : حرارة", options: ["مروحة : هواء", "مذياع : صوت", "مصباح : وهج", "مطر : برودة"], correctText: "مصباح : وهج" },
+        { type: "التناظر اللفظي", q: "حجة : برهان", options: ["خوف : ذعر", "قوة : شجاعة", "علم : فهم", "صمت : حديث"], correctText: "خوف : ذعر" },
+        { type: "التناظر اللفظي", q: "مكيدة : دهاء", options: ["ثورة : غضب", "نجاح : كسل", "خيانة : وفاء", "رحمة : قسوة"], correctText: "ثورة : غضب" },
 
-        // --- 2. إكمال الجمل ---
-        { type: "إكمال الجمل", q: "من سار على الدرب وصل، ومن اتكل على الأماني .....", options: ["فشل", "تأخر", "ضاع", "خسر"], correctText: "ضاع" },
-        { type: "إكمال الجمل", q: "الإنسان القوي هو الذي يتحكم في .....، لا الذي يتحكم فيه .....", options: ["نفسه - الآخرون", "قراره - الظروف", "أفعاله - المجتمع", "وقته - الكسل"], correctText: "نفسه - الآخرون" },
-        { type: "إكمال الجمل", q: "القراءة تفتح لك آفاقاً من ..... وتمنحك مفاتيح .....", options: ["المعرفة - العقول", "الإبداع - النجاح", "الخيال - الإنجاز", "الثقافة - الحكمة"], correctText: "المعرفة - العقول" },
-        { type: "إكمال الجمل", q: "السعادة ليست في كثرة المال، بل في ..... بما تملك", options: ["القناعة", "الرضا", "التوفير", "الاستثمار"], correctText: "القناعة" },
+        // --- الخطأ السياقي (فائق الصعوبة) ---
+        { type: "الخطأ في السياق", q: "إن طول العمر لا يقاس بالسنين، بل بما حققه الإنسان من فشل في حياته يخلد ذكره", options: ["العمر", "بالسنين", "حققه", "فشل"], correctText: "فشل" },
+        { type: "الخطأ في السياق", q: "عظمة عقلك تخلق لك الحساد، وعظمة قلبك تخلق لك الأعداء الذين يحبونك", options: ["عظمة", "الحساد", "الأعداء", "يحبونك"], correctText: "الأعداء" },
+        { type: "الخطأ في السياق", q: "الابتسامة هي الجسر الأقصر بين القلوب، وهي أقوى وسيلة لتبديد المحبة بين الناس", options: ["الجسر", "القلوب", "تبديد", "المحبة"], correctText: "المحبة" },
+        { type: "الخطأ في السياق", q: "المتواضع من إذا رأى من هو دونه في العلم قال: هذا أوتي أقل مما أوتيت أنا فربما هو أفضل", options: ["المتواضع", "دونه", "أقل", "أفضل"], correctText: "أقل" },
 
-        // --- 3. المفردة الشاذة ---
-        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة؟", options: ["الطماطم", "القمح", "الذرة", "الشعير"], correctText: "الطماطم" },
-        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة؟", options: ["الحصان", "الأسد", "النمر", "الفهد"], correctText: "الحصان" },
-        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة؟", options: ["المحيط الهادي", "آسيا", "أوروبا", "أفريقيا"], correctText: "المحيط الهادي" },
-        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة؟", options: ["الممحاة", "المسطرة", "المنقلة", "الفرجار"], correctText: "الممحاة" },
+        // --- إكمال الجمل ---
+        { type: "إكمال الجمل", q: "من أراد حلاوة ..... فليصبر على مرارة .....", options: ["العسل - اللسع", "النجاح - الفشل", "الراحة - السهر", "الفوز - التعب"], correctText: "العسل - اللسع" },
+        { type: "إكمال الجمل", q: "يعد ..... من أهم وسائل التفاهم بين الشعوب، وبدونه تسود .....", options: ["الحوار - الفوضى", "المال - التجارة", "العلم - الجهل", "السفر - الغربة"], correctText: "الحوار - الفوضى" },
 
-        // --- 4. الخطأ في السياق ---
-        { type: "الخطأ في السياق", q: "العدل أساس الملك، والظلم يهدم القصور ويعلي الديار", options: ["العدل", "الملك", "يهدم", "يعلي"], correctText: "يعلي" },
-        { type: "الخطأ في السياق", q: "المثقف هو من قرأ الكثير، لكنه لا يطبق ما تعلمه في واقعه", options: ["المثقف", "الكثير", "لا يطبق", "واقعه"], correctText: "لا يطبق" },
-        { type: "الخطأ في السياق", q: "الاعتراف بالخطأ فضيلة، أما المكابرة فهي دليل على قوة الشخصية", options: ["الاعتراف", "فضيلة", "المكابرة", "قوة"], correctText: "قوة" },
-        { type: "الخطأ في السياق", q: "الشخص المتفائل يرى فرصة في كل صعوبة، والمتشائم يرى صعوبة في كل منحة", options: ["المتفائل", "فرصة", "المتشائم", "منحة"], correctText: "منحة" },
+        // --- المفردة الشاذة ---
+        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة منطقياً؟", options: ["الذهب", "الفضة", "النحاس", "الماس"], correctText: "الماس" },
+        { type: "المفردة الشاذة", q: "ما الكلمة المختلفة منطقياً؟", options: ["الجمعة", "السبت", "الأحد", "الاثنين"], correctText: "الجمعة" },
 
-        // --- 5. استيعاب المقروء ---
+        // --- استيعاب المقروء (مستوى عالي) ---
         { 
             type: "استيعاب المقروء", 
-            text: "يتعرض الغطاء النباتي لضغوط متزايدة نتيجة التوسع العمراني غير المخطط، مما يؤدي إلى تآكل التربة وفقدان التنوع البيولوجي الذي يعتمد عليه توازن النظم البيئية المحلية.",
-            q: "السبب المباشر لفقدان التنوع البيولوجي حسب النص هو:", 
-            options: ["التوسع العمراني غير المخطط", "كثرة الأمطار", "تغير الفصول", "استخدام الأسمدة"], 
-            correctText: "التوسع العمراني غير المخطط" 
-        },
-        { 
-            type: "استيعاب المقروء", 
-            text: "يُعزى الفشل في تحقيق الأهداف غالباً إلى ضعف التخطيط أو غياب الإرادة، فالتخطيط هو البوصلة التي توجه الجهود، بينما الإرادة هي المحرك الذي يضمن الاستمرارية.",
-            q: "يستنتج من النص أن التخطيط بدون إرادة يؤدي إلى:", 
-            options: ["نجاح سريع", "توقف عن الاستمرار", "تحقيق الأهداف", "فشل التخطيط"], 
-            correctText: "توقف عن الاستمرار" 
-        },
-        { 
-            type: "استيعاب المقروء", 
-            text: "تعتبر المياه الافتراضية أداة قياسية لتقدير حجم المياه المهدورة في إنتاج السلع، حيث يساعد هذا المفهوم الدول على اتخاذ قرارات اقتصادية واعية بشأن استيراد أو تصدير المحاصيل الزراعية كثيفة استهلاك المياه.",
-            q: "الفائدة العملية لمفهوم المياه الافتراضية هي:", 
-            options: ["رفع أسعار السلع", "ترشيد اتخاذ القرارات الاقتصادية", "زيادة استيراد المياه", "تقليل إنتاج المحاصيل"], 
-            correctText: "ترشيد اتخاذ القرارات الاقتصادية" 
-        },
-        { 
-            type: "استيعاب المقروء", 
-            text: "يتأثر نمو النباتات بعملية التمثيل الضوئي التي تعتمد بشكل جوهري على شدة الضوء وتركيز ثاني أكسيد الكربون، مما يفسر تباين معدلات النمو في البيئات المختلفة.",
-            q: "يستنتج من النص أن تباين معدلات نمو النبات يعود لـ:", 
-            options: ["الوراثة فقط", "العوامل البيئية المحفزة", "قوة التربة", "حركة الرياح"], 
-            correctText: "العوامل البيئية المحفزة" 
+            text: "تعتبر (المياه الافتراضية) أداة استراتيجية لتقدير حجم المياه المستهلكة في إنتاج السلع؛ فاستيراد دولة ما لطن من القمح يعني توفير كمية المياه التي كان سيستهلكها إنتاجه محلياً، وهو ما يسمى 'تجارة المياه المستترة'.",
+            q: "يستنتج من النص أن مفهوم 'تجارة المياه المستترة' يهدف بالأساس إلى:", 
+            options: ["ترشيد استهلاك المياه القومي", "زيادة صادرات القمح", "حساب تكلفة النقل البحري", "تحديد أسعار السلع عالمياً"], 
+            correctText: "ترشيد استهلاك المياه القومي" 
         }
     ];
 
     let quizData = [];
-
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-    }
+    function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
     function startQuiz() {
-        if (!document.getElementById('student-name').value) { alert("لطفاً، ادخل اسمك أولاً"); return; }
+        if (!document.getElementById('student-name').value) { alert("لطفاً، ادخل اسمك الثلاثي"); return; }
         quizData = shuffle([...rawData]);
         document.getElementById('login-section').classList.add('hidden');
         document.getElementById('quiz-section').classList.remove('hidden');
@@ -179,21 +114,18 @@
 
     function showQuestion() {
         const q = quizData[currentQ];
-        const shuffledOptions = shuffle([...q.options]);
-        document.getElementById('question-title').innerText = `س ${currentQ + 1} في ( ${q.type} )`;
+        document.getElementById('question-title').innerText = `س ${currentQ + 1} | ${q.type}`;
         const readingBox = document.getElementById('reading-container');
-        if (q.text) { readingBox.innerText = q.text; readingBox.classList.remove('hidden'); } 
-        else { readingBox.classList.add('hidden'); }
+        if (q.text) { readingBox.innerText = q.text; readingBox.classList.remove('hidden'); } else { readingBox.classList.add('hidden'); }
         document.getElementById('question-text').innerText = q.q;
         const container = document.getElementById('options-container');
         container.innerHTML = '';
         document.getElementById('feedback').innerText = '';
-        shuffledOptions.forEach((opt, index) => {
+        shuffle([...q.options]).forEach(opt => {
             const btn = document.createElement('button');
             btn.className = 'option-btn';
-            btn.id = `opt-${index}`;
             btn.innerText = opt;
-            btn.onclick = () => checkAnswer(index, opt === q.correctText, q.correctText);
+            btn.onclick = () => checkAnswer(btn, opt === q.correctText, q.correctText);
             container.appendChild(btn);
         });
         startTimer();
@@ -203,62 +135,52 @@
         clearInterval(timerInterval);
         timeLeft = 40;
         updateTimerUI();
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            updateTimerUI();
-            if (timeLeft <= 0) { clearInterval(timerInterval); showCorrectAndNext(); }
-        }, 1000);
+        timerInterval = setInterval(() => { timeLeft--; updateTimerUI(); if (timeLeft <= 0) { clearInterval(timerInterval); handleTimeout(); } }, 1000);
     }
 
     function updateTimerUI() {
-        document.getElementById('timer-text').innerText = `الوقت المتبقي: ${timeLeft}`;
+        document.getElementById('timer-text').innerText = `⏳ المتبقي: ${timeLeft} ثانية`;
         document.getElementById('timer-bar').style.width = `${(timeLeft / 40) * 100}%`;
     }
 
-    function checkAnswer(index, isCorrect, correctText) {
+    function checkAnswer(btn, isCorrect, correctText) {
         clearInterval(timerInterval);
-        disableOptions();
+        disableButtons();
         if (isCorrect) {
             score++;
-            document.getElementById(`opt-${index}`).classList.add('correct-flash');
-            document.getElementById('feedback').innerHTML = "<span style='color:green'>إجابة صحيحة! أحسنت يا بطل 🌟</span>";
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            btn.classList.add('correct-flash');
+            document.getElementById('feedback').innerHTML = "<span style='color:var(--correct)'>رائع! إجابة دقيقة يا بطل 🌟</span>";
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
         } else {
-            document.getElementById(`opt-${index}`).classList.add('wrong-flash');
+            btn.classList.add('wrong-flash');
             highlightCorrect(correctText);
-            document.getElementById('feedback').innerHTML = "<span style='color:red'>محاولة جيدة، واصل.. 💪 (الصواب بالأخضر)</span>";
+            document.getElementById('feedback').innerHTML = "<span style='color:var(--wrong)'>محاولة جيدة، الصواب موضح بالأخضر 💪</span>";
         }
-        setTimeout(nextQuestion, TRANSITION_DELAY);
+        setTimeout(nextQuestion, 5000);
     }
 
-    function highlightCorrect(correctText) {
-        const btns = document.querySelectorAll('.option-btn');
-        btns.forEach(btn => { if (btn.innerText === correctText) btn.classList.add('correct-flash'); });
+    function handleTimeout() {
+        disableButtons();
+        highlightCorrect(quizData[currentQ].correctText);
+        document.getElementById('feedback').innerHTML = "<span style='color:var(--accent)'>انتهى الوقت! ركز في السؤال القادم 🕒</span>";
+        setTimeout(nextQuestion, 5000);
     }
 
-    function showCorrectAndNext() {
-        const q = quizData[currentQ];
-        document.getElementById('feedback').innerHTML = "<span style='color:orange'>انتهى الوقت! الصواب موضح بالأخضر.. واصل 💪</span>";
-        highlightCorrect(q.correctText);
-        disableOptions();
-        setTimeout(nextQuestion, TRANSITION_DELAY);
+    function highlightCorrect(text) {
+        document.querySelectorAll('.option-btn').forEach(b => { if (b.innerText === text) b.classList.add('correct-flash'); });
     }
 
-    function disableOptions() {
-        const btns = document.querySelectorAll('.option-btn');
-        btns.forEach(btn => btn.disabled = true);
-    }
+    function disableButtons() { document.querySelectorAll('.option-btn').forEach(b => b.disabled = true); }
 
     function nextQuestion() {
         currentQ++;
-        if (currentQ < quizData.length) { showQuestion(); } 
-        else { finishQuiz(); }
+        if (currentQ < quizData.length) showQuestion(); else finishQuiz();
     }
 
     function finishQuiz() {
         document.getElementById('quiz-section').classList.add('hidden');
         document.getElementById('result-section').classList.remove('hidden');
-        document.getElementById('final-score').innerText = `درجتك هي: ${score} من ${quizData.length}`;
+        document.getElementById('final-score').innerText = `${score} / ${quizData.length}`;
     }
 </script>
 </body>
